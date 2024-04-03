@@ -3,7 +3,7 @@
 	Plugin Name: propz WordPress Tools
 	Description: Just a small collection of some handy WordPress functions and features.
 	Author: Wellington Estevo
-	Version: 0.1
+	Version: 0.2
 	Author URI: https://propz.de
 */
 
@@ -13,7 +13,7 @@
  * @package WordPress
  * @subpackage propz-wordpress-tools
  * @since 0.1
- * @version 0.1
+ * @version 0.2
  */
 
 \defined( 'ABSPATH' ) || exit;
@@ -25,28 +25,28 @@
 	 */
 	function prpz_tools_init(): void
 	{
-		// Menu order for posts
+		// Added: Menu order for posts
 		add_post_type_support( 'page', 'page-attributes' );
-		// From WP 5.3, add_theme_support('html5', ['script', 'style']); removes type="text/javascript" and type=”text/css” from enqueued scripts and styles.
+		// Added: HTML5 theme support > removes type="text/javascript" and type=”text/css” from enqueued scripts and styles.
 		add_theme_support( 'html5', [ 'script', 'style' ] );
 
 	/*	====================
 		Remove junk from head
 		==================== */
 
-		// Remove info about WordPress version from <head>
+		// Removed: Info about WordPress version from <head>
 		remove_action( 'wp_head', 'wp_generator' );
 		add_filter( 'the_generator', function() { return ''; } );
 
-		// Remove Windows Live Writer manifest from <head>
+		// Removed: Windows Live Writer manifest from <head>
 		remove_action( 'wp_head', 'wlwmanifest_link' );
 
-		// Remove current page shortlink
+		// Removed: Current page shortlink
 		remove_action( 'wp_head', 'wp_shortlink_wp_head', 10 );
 		remove_action( 'template_redirect', 'wp_shortlink_header', 11 );
 
 	/*	====================
-		Remove emojis from everywhere
+		Removed: Emojis from everywhere
 		==================== */
 
 		remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
@@ -60,15 +60,7 @@
 			add_filter( 'emoji_svg_url', '__return_false' );
 
 	/*	====================
-		Remove rest api hints
-		==================== */
-
-		remove_action( 'wp_head', 'rest_output_link_wp_head' );
-		remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
-		remove_action( 'template_redirect', 'rest_output_link_header', 11, 0 );
-
-	/*	====================
-		Disable auto-update email notifications
+		Removed: Auto-update email notifications
 		==================== */
 
 		add_filter( 'auto_plugin_update_send_email', '__return_false' );
@@ -79,7 +71,7 @@
 
 
 	/**
-	 * Filter function used to remove the tinymce emoji plugin.
+	 * Removed: Tinymce emoji plugin.
 	 * 
 	 * @param mixed $plugins
 	 * @return array
@@ -95,22 +87,31 @@
 
 
 	/**
-	 * Remove Rest API oEmbed stuff
+	 * Removed: Some REST API Stuff
 	 * 
 	 * @return void
 	 */
-	function prpz_remove_api_oembed(): void
+	function prpz_remove_api_stuff(): void
 	{
-		remove_action( 'rest_api_init', 'wp_oembed_register_route' );		// Remove oEmbed REST API endpoint
-		remove_filter( 'oembed_dataparse', 'wp_filter_oembed_result', 10 );	// Don't filter oEmbed results
-		remove_action( 'wp_head', 'wp_oembed_add_host_js' ); 				// Remove oEmbed-JavaScript
-		add_filter( 'embed_oembed_discover', '__return_false' );			// Remove oEmbed auto discovery
+		// Remove the REST API lines from the HTML Header
+		remove_action( 'wp_head', 'rest_output_link_wp_head', 10 );
+		// Remove oEmbed REST API endpoint
+		remove_action( 'rest_api_init', 'wp_oembed_register_route' );
+		// Remove oEmbed-JavaScript
+		remove_action( 'wp_head', 'wp_oembed_add_host_js' );
+		// Filters whether to inspect the given URL for discoverable link tags.
+		add_filter( 'embed_oembed_discover', '__return_false' );
+		// Removes oEmbed discovery links in the head element of the website.
+		remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
+		// Don't sends Link header for the REST API.
+		remove_action( 'template_redirect', 'rest_output_link_header', 11, 0 );
+
 	}
-	add_action( 'after_setup_theme', 'prpz_remove_api_oembed' );
+	add_action( 'after_setup_theme', 'prpz_remove_api_stuff' );
 
 
 	/**
-	 * Remove rest api for non logged in users
+	 * Added: REST API only for logged in users
 	 * 
 	 * @param mixed $errors
 	 * @return mixed
@@ -131,7 +132,7 @@
 
 
 	/**
-	 * Disable WP JSON API endpoints for listing users
+	 * Removed: REST API endpoints for listing users
 	 * 
 	 * @param array $endpoints - API Endpoints
 	 * @return array
@@ -150,7 +151,7 @@
 
 
 	/**
-	 * Customize Dashboard Widgets
+	 * Removed: All unneeded Dashboard Widgets
 	 * 
 	 * @return void
 	 */
@@ -181,8 +182,7 @@
 
 
 	/**
-	 * Disable Duotone Filter in Gutenberg
-	 * Disables the unwanted loading of SVGs in body tag
+	 * Removed: Duotone Filter in Gutenberg + loading of SVGs in body tag
 	 * 
 	 * @return void
 	 */
@@ -195,7 +195,7 @@
 
 
 	/**
-	 * Custom Mime types
+	 * Added: Custom Mime types
 	 * 
 	 * @param array $mimes - All mime types
 	 * @return array
@@ -213,7 +213,7 @@
 
 
 	/**
-	 * Add custom wp_headers
+	 * Added: Custom WP http headers
 	 * 
 	 * @param array $headers
 	 * @return $array
@@ -233,7 +233,7 @@
 
 
 	/**
-	 * Hide all notices for non-admins
+	 * Removed: All notices for non-admins
 	 * 
 	 * @return void
 	 */
@@ -251,7 +251,7 @@
 
 
 	/**
-	 * Deactivate WP Comment IP logging
+	 * Removed: WP Comment IP logging
 	 * 
 	 * @param string $comment_author_ip - Author IP
 	 * @return string
@@ -264,7 +264,7 @@
 
 
 	/**
-	 * Yoast - Custom separators
+	 * Added: Yoast - Custom separators
 	 * 
 	 * @param array $separators - All Separators
 	 * @return array
