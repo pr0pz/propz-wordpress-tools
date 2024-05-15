@@ -3,7 +3,7 @@
 	Plugin Name: propz WordPress Tools
 	Description: Just a small collection of some handy WordPress functions and features.
 	Author: Wellington Estevo
-	Version: 0.2
+	Version: 0.3
 	Author URI: https://propz.de
 */
 
@@ -13,7 +13,7 @@
  * @package WordPress
  * @subpackage propz-wordpress-tools
  * @since 0.1
- * @version 0.2
+ * @version 0.3
  */
 
 \defined( 'ABSPATH' ) || exit;
@@ -122,8 +122,8 @@
 		if ( is_wp_error( $errors ) )
 			return $errors;
 		
-		//if( ! is_user_logged_in() ) {
-		if( ! current_user_can( 'administrator' ) )
+		//if( ! current_user_can( 'administrator' ) )
+		if( ! is_user_logged_in() )
 			return new WP_Error( 'no_rest_api_sorry', 'Nope!', array( 'status' => 401 ) );
 	
 		return $errors;
@@ -139,6 +139,8 @@
 	 */
 	function prpz_rest_endpoints( array $endpoints ): array
 	{
+		if ( is_user_logged_in() ) return $endpoints;
+
 		if ( isset( $endpoints['/wp/v2/users'] ) )
 			unset( $endpoints['/wp/v2/users'] );
 
@@ -196,6 +198,7 @@
 
 	/**
 	 * Added: Custom Mime types
+	 * https://wpengine.com/support/mime-types-wordpress/
 	 * 
 	 * @param array $mimes - All mime types
 	 * @return array
@@ -204,8 +207,20 @@
 	{
 		function prpz_upload_mimes( array $mimes ): array
 		{
-			// Add SVG mime type for upload
 			$mimes['svg'] = 'image/svg+xml';
+			$mimes['webp'] = 'image/webp';
+			$mimes['webm'] = 'video/webm';
+			$mimes['txt'] = 'text/plain';
+			$mimes['zip'] = 'application/zip';
+			$mimes['rar'] = 'application/rar';
+			$mimes['7z'] = 'application/x-7z-compressed';
+			$mimes['gz'] = 'application/x-zip';
+			$mimes['gzip'] = ' application/x-zip';
+			$mimes['dotx'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.template';
+			$mimes['potx'] = 'application/vnd.openxmlformats-officedocument.presentationml.template';
+			$mimes['pages'] = 'application/vnd.apple.pages';
+			$mimes['numbers'] = 'application/vnd.apple.numbers';
+			$mimes['key'] = 'application/vnd.apple.keynote';
 			return $mimes;
 		}
 		add_filter( 'upload_mimes', 'prpz_upload_mimes' );

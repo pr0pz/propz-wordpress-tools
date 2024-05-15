@@ -8,7 +8,7 @@
  * @package WordPress
  * @subpackage propz-wordpress-tools
  * @since 0.1
- * @version 0.1
+ * @version 0.3
  */
 
 // Load WP
@@ -28,7 +28,7 @@ $test = [
 
 	'divi_theme_activated' => divi_theme_activated() ? 'true' : 'false',
 	'divi_builder_activated' => divi_builder_activated() ? 'true' : 'false',
-	'is_divi_builder_active' =>is_divi_builder_active() ? 'true' : 'false',
+	'is_divi_builder_active' => is_divi_builder_active() ? 'true' : 'false',
 ];
 
 // Test
